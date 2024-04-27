@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
-
+import PostCard from "./components/PostCard";
+import Navbar from "./components/Navbar";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import SignInPage from "./components/SignInPage";
+import SignUpPage from "./components/SignUpPage";
+import ProfilePage from "./components/ProfilePage";
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Navbar/>
+      <Routes>
+        <Route path="/" element={
+            <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginTop: '1rem'}}>
+              <PostCard/>
+              <PostCard/>
+              <PostCard/>
+              <PostCard/>
+            </div>}>
+        </Route>
+        <Route path="/signin" element={ <SignInPage/> }/>
+        <Route path="/signup" element={ <SignUpPage/> }/>
+        <Route path="/profile" element={ <ProfilePage/> }/>
+      </Routes>
+    </BrowserRouter>
   );
+    
 }
 
 export default App;
