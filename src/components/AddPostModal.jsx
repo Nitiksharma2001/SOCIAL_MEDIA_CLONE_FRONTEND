@@ -1,9 +1,7 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
-
+import { useState } from 'react'
+import { postwithAuth } from '../utils/Request'
+import { useDispatch, useSelector } from 'react-redux'
+import { addPost } from '../features/PostSlice'
 const style = {
   position: 'absolute',
   top: '50%',
@@ -13,35 +11,109 @@ const style = {
   bgcolor: 'background.paper',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 4,
-};
+  p: 2,
+}
 
-export default function BasicModal() {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+export default function BasicModal({ isActive, setIsActive }) {
+  const user = useSelector((state) => state.user.value)
+  const dispatch = useDispatch()
 
+  const [isLoading, setIsLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    imageUrl: '',
+  })
+
+  const formDataChange = (e) => {
+    setFormData((prev) => {
+      return {
+        ...prev,
+        [e.target.name]: e.target.value,
+      }
+    })
+  }
+
+  const handleSubmit = async () => {
+    setIsLoading(true)
+    try {
+      const result = await postwithAuth('post/', user.token, formData)
+      dispatch(addPost(result.post))
+      setFormData({ title: '', description: '', imageUrl: '' })
+      if ((result.message = 'post created')) {
+        setIsActive(false)
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }
   return (
-    <div>
-      <Button 
-        key={'addPost'}
-        sx={{ my: 2, color: 'white', display: 'block' }}
-        onClick={handleOpen}>add a post</Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Text in a modal
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </Typography>
-        </Box>
-      </Modal>
+    <div class={`modal ${isActive && 'is-active'}`}>
+      <div class='modal-background'></div>
+      <div class='modal-card'>
+        <header class='modal-card-head'>
+          <p class='modal-card-title'>Add a Post</p>
+          <button
+            onClick={() => setIsActive(false)}
+            class='delete'
+            aria-label='close'
+          ></button>
+        </header>
+        <section class='modal-card-body'>
+          <div class='field'>
+            <label class='label'>Title</label>
+            <div class='control'>
+              <input
+                class='input'
+                name='title'
+                value={formData.title}
+                onChange={formDataChange}
+                type='text'
+                placeholder='e.g Nature'
+              />
+            </div>
+          </div>
+          <div class='field'>
+            <label class='label'>Description</label>
+            <div class='control'>
+              <input
+                class='input'
+                name='description'
+                value={formData.description}
+                onChange={formDataChange}
+                type='text'
+                placeholder='e.g Beautiful Place'
+              />
+            </div>
+          </div>
+
+          <div class='field'>
+            <label class='label'>Image URL</label>
+            <div class='control'>
+              <input
+                class='input'
+                name='imageUrl'
+                value={formData.imageUrl}
+                onChange={formDataChange}
+                type='text'
+              />
+            </div>
+          </div>
+        </section>
+        <footer class='modal-card-foot'>
+          <div class='buttons'>
+            <button
+              onClick={handleSubmit}
+              class={`button is-success ${isLoading && 'is-loading'}`}
+            >
+              Submit
+            </button>
+            <button onClick={() => setIsActive(false)} class='button'>
+              Cancel
+            </button>
+          </div>
+        </footer>
+      </div>
     </div>
-  );
+  )
 }

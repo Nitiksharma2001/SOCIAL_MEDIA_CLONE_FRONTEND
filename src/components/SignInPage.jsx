@@ -3,55 +3,55 @@ import Avatar from '@mui/material/Avatar'
 import CssBaseline from '@mui/material/CssBaseline'
 import TextField from '@mui/material/TextField'
 import LoadingButton from '@mui/lab/LoadingButton'
-import SaveIcon from '@mui/icons-material/Save';
-import SendIcon from '@mui/icons-material/Send';
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Paper from '@mui/material/Paper'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-
-function Copyright(props) {
-  return (
-    <Typography
-      variant='body2'
-      color='text.secondary'
-      align='center'
-      {...props}
-    >
-      {'Copyright © '}
-      <Link color='inherit' href='https://mui.com/'>
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  )
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
+import { getWithoutAuth } from '../utils/Request'
+import { Alert, Collapse, Fade } from '@mui/material'
+import {authorization} from "../constants/Constants"
+import { useDispatch } from 'react-redux'
+import { setUser } from '../features/UserSlice'
 
 const defaultTheme = createTheme()
 
 export default function SignInPage() {
-  const [loading, setLoading] = React.useState(false);
-  function handleClick() {
-    setLoading(true);
-  }
+  const [loading, setLoading] = React.useState(false)
+  const [message, setMessage] = React.useState('')
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    const data = new FormData(event.currentTarget)
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    })
+    try {
+      setLoading(true)
+      const data = new FormData(event.currentTarget)
+      const email = data.get('email'), password = data.get('password')
+      const result = await getWithoutAuth(`auth/signin/${email}/${password}`)
+      setMessage(result.message)
+      if (result.user) {
+        localStorage.setItem('user', JSON.stringify(result.user))
+      }
+      if(result.message === authorization.USER_VERIFIED){
+        dispatch(setUser(result.user))
+        navigate('/')
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      <Collapse in={message !== ''}>
+        <Alert severity={message === authorization.USER_VERIFIED ? 'success' : 'error'}>
+          {message}
+        </Alert>
+      </Collapse>
+
       <Grid container component='main' sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid
@@ -115,15 +115,16 @@ export default function SignInPage() {
               />
               <LoadingButton
                 fullWidth
+                type='submit'
                 sx={{ mt: 3, mb: 2 }}
                 size='large'
                 loading={loading}
-                onClick={handleClick}
                 loadingPosition='end'
                 variant='contained'
               >
                 <span>sign in</span>
               </LoadingButton>
+
               <Grid container>
                 <Grid item>
                   <Link to='/signup'>Don't have an account? Sign Up</Link>

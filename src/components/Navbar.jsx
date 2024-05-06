@@ -1,163 +1,85 @@
 import * as React from 'react'
-import AppBar from '@mui/material/AppBar'
-import Box from '@mui/material/Box'
-import Toolbar from '@mui/material/Toolbar'
-import IconButton from '@mui/material/IconButton'
-import Typography from '@mui/material/Typography'
-import Menu from '@mui/material/Menu'
-import MenuIcon from '@mui/icons-material/Menu'
-import Container from '@mui/material/Container'
-import Avatar from '@mui/material/Avatar'
-import Tooltip from '@mui/material/Tooltip'
-import MenuItem from '@mui/material/MenuItem'
-import AdbIcon from '@mui/icons-material/Adb'
 import AddPostModal from './AddPostModal'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { removeUser, setUser } from '../features/UserSlice'
+import { useEffect } from 'react'
 
 function ResponsiveAppBar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null)
-  const [anchorElUser, setAnchorElUser] = React.useState(null)
+  const [isActive, setIsActive] = React.useState(false)
   const navigate = useNavigate()
-  const settings = [
-    {
-      text: 'profile',
-      onClick: () => {
-        navigate('/profile')
-      },
-    },
-    {
-      text: 'logout',
-      onClick: () => {
-        navigate('/signin')
-      },
-    },
-  ]
-
-  const handleOpenNavMenu = (event) => {
-    setAnchorElNav(event.currentTarget)
-  }
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget)
+  const user = useSelector((state) => state.user.value)
+  const dispatch = useDispatch()
+  const onLogOut = () => {
+    localStorage.removeItem('user')
+    dispatch(removeUser())
+    navigate('/signin')
   }
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null)
-  }
-
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null)
-  }
+  useEffect(() => {
+    if (!user) {
+      const loggedInUser = localStorage.getItem('user')
+      if (loggedInUser) {
+        dispatch(setUser(JSON.parse(loggedInUser)))
+      }
+    }
+  }, [user])
 
   return (
-    <AppBar position='static'>
-      <Container maxWidth='xl'>
-        <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-          <Typography
-            variant='h6'
-            noWrap
-            component='a'
-            href='/'
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            LOGO
-          </Typography>
+    <>
+    <nav class='navbar' role='navigation' aria-label='main navigation'>
+      <div class='navbar-brand' style={{ marginLeft: '1rem' }}>
+        <Link to='/' class='navbar-item'>
+          Social Media
+        </Link>
+      </div>
+      
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size='large'
-              aria-label='account of current user'
-              aria-controls='menu-appbar'
-              aria-haspopup='true'
-              onClick={handleOpenNavMenu}
-              color='inherit'
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id='menu-appbar'
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-              }}
-            >
-              <AddPostModal />
-            </Menu>
-          </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Typography
-            variant='h5'
-            noWrap
-            component='a'
-            href='/'
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            LOGO
-          </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            <AddPostModal />
-          </Box>
+      <AddPostModal isActive={isActive} setIsActive={setIsActive} />
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title='Open settings'>
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id='menu-appbar'
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
+      <div id='navbarBasicExample' class='navbar-menu'>
+          {user && (
+            <a
+              onClick={() => setIsActive(!isActive)}
+              class='navbar-item is-size-5'
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting.text} onClick={setting.onClick}>
-                  <Typography textAlign='center'>{setting.text}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+              Add Post
+            </a>
+          )}
+        
+
+        {!user && (
+          <div class='navbar-end'>
+            <div class='navbar-item'>
+              <div class='buttons'>
+                <Link to='/signup' class='button is-primary'>
+                  <strong>Sign up</strong>
+                </Link>
+                <Link to='/signin' class='button is-light'>
+                  Log in
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+        {user && (
+          <div class='navbar-end'>
+            <div class='navbar-item'>
+              <div class='buttons'>
+                <button onClick={onLogOut} class='button is-danger'>
+                  Log Out
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+      
+    </nav>
+    
+    </>
+    
   )
 }
 export default ResponsiveAppBar
