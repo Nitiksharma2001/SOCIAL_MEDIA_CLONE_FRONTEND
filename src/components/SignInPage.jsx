@@ -11,7 +11,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { getWithoutAuth } from '../utils/Request'
-import { Alert, Collapse, Fade } from '@mui/material'
+import { Alert, Collapse } from '@mui/material'
 import {authorization} from "../constants/Constants"
 import { useDispatch } from 'react-redux'
 import { setUser } from '../features/UserSlice'

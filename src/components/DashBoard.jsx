@@ -1,9 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { getwithAuth } from '../utils/Request'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import PostCard from './PostCard'
-import { setUser } from '../features/UserSlice'
-import { Skeleton } from '@mui/material'
 import SkeletonLoading from "./SkeletonLoading"
 
 const DashBoard = () => {

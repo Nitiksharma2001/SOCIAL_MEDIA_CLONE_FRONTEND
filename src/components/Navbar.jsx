@@ -5,9 +5,11 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { removeUser, setUser } from '../features/UserSlice'
 import { useEffect } from 'react'
+import { useState } from 'react'
 
 function ResponsiveAppBar() {
-  const [isActive, setIsActive] = React.useState(false)
+  const [isActive, setIsActive] = useState(false)
+  const [isHamburgerActive, setIsHamburgerActive] = useState(false)
   const navigate = useNavigate()
   const user = useSelector((state) => state.user.value)
   const dispatch = useDispatch()
@@ -28,58 +30,73 @@ function ResponsiveAppBar() {
 
   return (
     <>
-    <nav className='navbar' role='navigation' aria-label='main navigation'>
-      <div className='navbar-brand' style={{ marginLeft: '1rem' }}>
-        <Link to='/' className='navbar-item'>
-          Social Media
-        </Link>
-      </div>
-      
+      <nav
+        className='navbar'
+        role='navigation'
+        aria-label='main navigation'
+      >
+        <div
+          className='navbar-brand'
+          style={{ marginLeft: '1rem' }}
+        >
+          <Link to='/' className='navbar-item'>
+            Social Media
+          </Link>
+          <a
+            role='button'
+            class={`navbar-burger ${isHamburgerActive && 'is-active'}`}
+            data-target='navMenu'
+            aria-label='menu'
+            aria-expanded='false'
+            onClick={() => setIsHamburgerActive(!isHamburgerActive)}
+          >
+            <span aria-hidden='true'></span>
+            <span aria-hidden='true'></span>
+            <span aria-hidden='true'></span>
+            <span aria-hidden='true'></span>
+          </a>
+        </div>
 
-      <AddPostModal isActive={isActive} setIsActive={setIsActive} />
-
-      <div id='navbarBasicExample' className='navbar-menu'>
-          {user && (
-            <a
-              onClick={() => setIsActive(!isActive)}
-              className='navbar-item is-size-5'
-            >
-              Add Post
-            </a>
-          )}
-        
-
-        {!user && (
-          <div className='navbar-end'>
-            <div className='navbar-item'>
-              <div className='buttons'>
-                <Link to='/signup' className='button is-primary'>
-                  <strong>Sign up</strong>
+        <div className={`navbar-menu ${isHamburgerActive && 'is-active'}`}>
+          {!user && (
+            <div className='navbar-end'>
+              <div className='navbar-item'>
+                <Link to='/signup' className='navbar-item'>
+                  Sign up
                 </Link>
-                <Link to='/signin' className='button is-light'>
+              </div>
+              <div className='navbar-item'>
+                <Link to='/signin' className='navbar-item'>
                   Log in
                 </Link>
               </div>
             </div>
-          </div>
-        )}
-        {user && (
-          <div className='navbar-end'>
-            <div className='navbar-item'>
-              <div className='buttons'>
-                <button onClick={onLogOut} className='button is-danger'>
-                  Log Out
-                </button>
+          )}
+          {user && (
+            <>
+              <div className='navbar-start'>
+                <div className='navbar-item'>
+                  <a
+                    onClick={() => setIsActive(!isActive)}
+                    className='navbar-item'
+                  >
+                    Add Post
+                  </a>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
-      </div>
-      
-    </nav>
-    
+              <div className='navbar-end'>
+                <div className='navbar-item'>
+                  <a onClick={onLogOut} className='navbar-item'>
+                    Log Out
+                  </a>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </nav>
+      <AddPostModal isActive={isActive} setIsActive={setIsActive} />
     </>
-    
   )
 }
 export default ResponsiveAppBar

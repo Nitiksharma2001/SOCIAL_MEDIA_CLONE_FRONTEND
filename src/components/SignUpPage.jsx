@@ -28,7 +28,7 @@ export default function SignUpPage() {
       password: data.get('password'),
     }
     try{
-      const result = await postWithoutAuth('auth/signup', newUserData)
+      await postWithoutAuth('auth/signup', newUserData)
       navigate('/signin')
     } finally{
       setIsButtonLoading(false)
