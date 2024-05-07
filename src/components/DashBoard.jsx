@@ -19,7 +19,7 @@ const DashBoard = () => {
       }}
     >
       {posts.length ? posts.map((post) => (
-        <div style={{minWidth: '20rem'}}> 
+        <div key={post._id} style={{minWidth: '20rem'}}> 
           <PostCard post={post} />
 
         </div>

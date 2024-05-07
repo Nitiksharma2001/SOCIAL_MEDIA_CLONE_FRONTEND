@@ -28,9 +28,9 @@ function ResponsiveAppBar() {
 
   return (
     <>
-    <nav class='navbar' role='navigation' aria-label='main navigation'>
-      <div class='navbar-brand' style={{ marginLeft: '1rem' }}>
-        <Link to='/' class='navbar-item'>
+    <nav className='navbar' role='navigation' aria-label='main navigation'>
+      <div className='navbar-brand' style={{ marginLeft: '1rem' }}>
+        <Link to='/' className='navbar-item'>
           Social Media
         </Link>
       </div>
@@ -38,11 +38,11 @@ function ResponsiveAppBar() {
 
       <AddPostModal isActive={isActive} setIsActive={setIsActive} />
 
-      <div id='navbarBasicExample' class='navbar-menu'>
+      <div id='navbarBasicExample' className='navbar-menu'>
           {user && (
             <a
               onClick={() => setIsActive(!isActive)}
-              class='navbar-item is-size-5'
+              className='navbar-item is-size-5'
             >
               Add Post
             </a>
@@ -50,13 +50,13 @@ function ResponsiveAppBar() {
         
 
         {!user && (
-          <div class='navbar-end'>
-            <div class='navbar-item'>
-              <div class='buttons'>
-                <Link to='/signup' class='button is-primary'>
+          <div className='navbar-end'>
+            <div className='navbar-item'>
+              <div className='buttons'>
+                <Link to='/signup' className='button is-primary'>
                   <strong>Sign up</strong>
                 </Link>
-                <Link to='/signin' class='button is-light'>
+                <Link to='/signin' className='button is-light'>
                   Log in
                 </Link>
               </div>
@@ -64,10 +64,10 @@ function ResponsiveAppBar() {
           </div>
         )}
         {user && (
-          <div class='navbar-end'>
-            <div class='navbar-item'>
-              <div class='buttons'>
-                <button onClick={onLogOut} class='button is-danger'>
+          <div className='navbar-end'>
+            <div className='navbar-item'>
+              <div className='buttons'>
+                <button onClick={onLogOut} className='button is-danger'>
                   Log Out
                 </button>
               </div>

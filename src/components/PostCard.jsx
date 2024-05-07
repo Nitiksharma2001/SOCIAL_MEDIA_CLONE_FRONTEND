@@ -3,26 +3,35 @@ import { styled } from '@mui/material/styles'
 import IconButton from '@mui/material/IconButton'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUser } from '../features/UserSlice'
-import { getwithAuth, getWithoutAuth, postwithAuth, putWithAuth } from '../utils/Request'
+import {
+  getwithAuth,
+  getWithoutAuth,
+  postwithAuth,
+  putWithAuth,
+} from '../utils/Request'
 import moment from 'moment'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { LazyLoadImage } from 'react-lazy-load-image-component'
+import 'react-lazy-load-image-component/src/effects/opacity.css'
+import { CircularProgress } from '@mui/material'
 
 export default function PostCard(props) {
   const { _id, title, description, imageUrl, noOfLikes, createdAt } = props.post
   const [isLoading, setIsLoading] = useState(false)
   const [comment, setComment] = useState('')
   const [comments, setComments] = useState([])
-  const [isLikedPost, setIsLikedPost] = useState(false) 
+  const [isLikedPost, setIsLikedPost] = useState(false)
   const [totalLikesOnPost, setTotalLikesOnPost] = useState(0)
+  const [imageLoading, setImageLoading] = useState(true)
 
   const user = useSelector((state) => state.user.value)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
   const addComment = async () => {
-    if(!user){
+    if (!user) {
       return navigate('/signin')
     }
     const result = await postwithAuth(`comment/${_id}`, user.token, {
@@ -47,18 +56,21 @@ export default function PostCard(props) {
       setTotalLikesOnPost(likeCount.post)
       setIsLikedPost(postLikedOrNot.message)
     }
-    if(user){
+    if (user) {
       checkLikedorNotAndCountLikes()
     }
   }, [])
 
   const likeOrDisLikeAPost = async () => {
-    if(!user){
+    if (!user) {
       return navigate('/signin')
     }
-    setTotalLikesOnPost(prev => isLikedPost ? prev-1 : prev+1)
+    setTotalLikesOnPost((prev) => (isLikedPost ? prev - 1 : prev + 1))
     setIsLikedPost(!isLikedPost)
-    await putWithAuth(`post/${isLikedPost ? 'dislike' : 'like'}/${_id}`, user.token)
+    await putWithAuth(
+      `post/${isLikedPost ? 'dislike' : 'like'}/${_id}`,
+      user.token
+    )
   }
   const getAllComentsOfPost = async () => {
     setIsLoading(true)
@@ -71,65 +83,102 @@ export default function PostCard(props) {
   }
 
   return (
-    <div class='card' style={{ maxWidth: '25rem' }}>
+    <div className='card' style={{ maxWidth: '25rem' }}>
       <div className='title is-2 m-2'>{title}</div>
-      <div class='card-image'>
-        <figure class='image is-4by3'>
-          <img src={imageUrl} alt='Placeholder image' />
+      <div className='card-image is-relative'>
+        {imageLoading && (
+          <CircularProgress
+            color='secondary'
+            sx={{
+              position: 'absolute',
+              top: '42%',
+              right: '45%',
+              zIndex: '10',
+            }}
+          />
+        )}
+        <figure className='image is-4by3'>
+          <LazyLoadImage
+            src={imageUrl} // use normal <img> attributes as props
+            onLoad={() => setImageLoading(false)}
+            height='100%'
+            width='100%'
+            effect='opacity'
+          />
         </figure>
       </div>
-      <div class='card-content'>
-        <div class='media'>
-          <div class='media-left'>
-            <figure class='image is-48x48'>
-              <img
-                src={imageUrl}
-                alt='Placeholder image'
-                style={{ borderRadius: '2rem' }}
+      <div className='card-content'>
+        <div className='media'>
+          <div className='media-left'>
+            <figure className='image is-48x48'>
+              <LazyLoadImage style={{borderRadius: '2rem'}}
+                src={imageUrl} // use normal <img> attributes as props
+                onLoad={() => setImageLoading(false)}
+                height='100%'
+                width='100%'
+                effect='opacity'
               />
             </figure>
           </div>
-          <div class='media-content'>
-            <p class='title is-4'>{props.post.user.name }</p>
-            <p class='subtitle is-6'>
+          <div className='media-content'>
+            <p className='title is-4'>{props.post.user.name}</p>
+            <p className='subtitle is-6'>
               {moment(createdAt).format('Do MMMM YYYY HH:MM A')}
             </p>
           </div>
         </div>
 
-        <div class='content'>
+        <div className='content'>
           {description}
           <br />
         </div>
-        <p class='control has-icons-left has-icons-right'>
-          <input onChange={e => setComment(e.target.value)} value={comment} class='input' type='text' placeholder='Comment...' />
-          <span class='icon is-small is-left'>
-            <i class='fa-solid fa-comment'></i>
+        <p className='control has-icons-left has-icons-right'>
+          <input
+            onChange={(e) => setComment(e.target.value)}
+            value={comment}
+            className='input'
+            type='text'
+            placeholder='Comment...'
+          />
+          <span className='icon is-small is-left'>
+            <i className='fa-solid fa-comment'></i>
           </span>
           <span
             onClick={addComment}
-            class={`icon is-small is-right ${comment.length && 'is-clickable'}`}
+            className={`icon is-small is-right ${
+              comment.length && 'is-clickable'
+            }`}
           >
-            <i class='fa-solid fa-plus is'></i>
+            <i className='fa-solid fa-plus is'></i>
           </span>
         </p>
-        <footer class='card-footer'>
-          <a href='#' onClick={likeOrDisLikeAPost} class={`card-footer-item ${isLikedPost && 'has-text-danger has-text-weight-bold'}`}>
+        <footer className='card-footer'>
+          <a
+            href='#'
+            onClick={likeOrDisLikeAPost}
+            className={`card-footer-item ${
+              isLikedPost && 'has-text-danger has-text-weight-bold'
+            }`}
+          >
             Like {totalLikesOnPost}
           </a>
           <button
             onClick={getAllComentsOfPost}
-            class={`button is-link ${isLoading && 'is-loading'}`}
+            className={`button is-link ${isLoading && 'is-loading'}`}
           >
             All Comments
           </button>
         </footer>
 
-        <div class={`box ${comments.length === 0 && 'is-hidden'}`}>
+        <div className={`box ${comments.length === 0 && 'is-hidden'}`}>
           {comments.map((comment) => (
             <div>
-              <span className='is-size-5 has-text-weight-bold'>{`@${comment.user.name}: `} </span>
-              <span className='is-size-5 has-text-weight-normal'>{comment.commentValue}</span>
+              <span className='is-size-5 has-text-weight-bold'>
+                {`@${comment.user.name}: `}{' '}
+              </span>
+              <span className='is-size-5 has-text-weight-normal'>
+                {comment.commentValue}
+              </span>
             </div>
           ))}
         </div>

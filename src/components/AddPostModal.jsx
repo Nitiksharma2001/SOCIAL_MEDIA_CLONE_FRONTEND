@@ -48,23 +48,23 @@ export default function BasicModal({ isActive, setIsActive }) {
     }
   }
   return (
-    <div class={`modal ${isActive && 'is-active'}`}>
-      <div class='modal-background'></div>
-      <div class='modal-card'>
-        <header class='modal-card-head'>
-          <p class='modal-card-title'>Add a Post</p>
+    <div className={`modal ${isActive && 'is-active'}`}>
+      <div className='modal-background'></div>
+      <div className='modal-card'>
+        <header className='modal-card-head'>
+          <p className='modal-card-title'>Add a Post</p>
           <button
             onClick={() => setIsActive(false)}
-            class='delete'
+            className='delete'
             aria-label='close'
           ></button>
         </header>
-        <section class='modal-card-body'>
-          <div class='field'>
-            <label class='label'>Title</label>
-            <div class='control'>
+        <section className='modal-card-body'>
+          <div className='field'>
+            <label className='label'>Title</label>
+            <div className='control'>
               <input
-                class='input'
+                className='input'
                 name='title'
                 value={formData.title}
                 onChange={formDataChange}
@@ -73,11 +73,11 @@ export default function BasicModal({ isActive, setIsActive }) {
               />
             </div>
           </div>
-          <div class='field'>
-            <label class='label'>Description</label>
-            <div class='control'>
+          <div className='field'>
+            <label className='label'>Description</label>
+            <div className='control'>
               <input
-                class='input'
+                className='input'
                 name='description'
                 value={formData.description}
                 onChange={formDataChange}
@@ -87,11 +87,11 @@ export default function BasicModal({ isActive, setIsActive }) {
             </div>
           </div>
 
-          <div class='field'>
-            <label class='label'>Image URL</label>
-            <div class='control'>
+          <div className='field'>
+            <label className='label'>Image URL</label>
+            <div className='control'>
               <input
-                class='input'
+                className='input'
                 name='imageUrl'
                 value={formData.imageUrl}
                 onChange={formDataChange}
@@ -100,15 +100,15 @@ export default function BasicModal({ isActive, setIsActive }) {
             </div>
           </div>
         </section>
-        <footer class='modal-card-foot'>
-          <div class='buttons'>
+        <footer className='modal-card-foot'>
+          <div className='buttons'>
             <button
               onClick={handleSubmit}
-              class={`button is-success ${isLoading && 'is-loading'}`}
+              className={`button is-success ${isLoading && 'is-loading'}`}
             >
               Submit
             </button>
-            <button onClick={() => setIsActive(false)} class='button'>
+            <button onClick={() => setIsActive(false)} className='button'>
               Cancel
             </button>
           </div>
