@@ -110,7 +110,7 @@ export default function PostCard(props) {
         <div className='media'>
           <div className='media-left'>
             <figure className='image is-48x48'>
-              <LazyLoadImage style={{borderRadius: '2rem'}}
+              <LazyLoadImage 
                 src={imageUrl} // use normal <img> attributes as props
                 onLoad={() => setImageLoading(false)}
                 height='100%'
@@ -151,9 +151,8 @@ export default function PostCard(props) {
             <i className='fa-solid fa-plus is'></i>
           </span>
         </p>
-        <footer className='card-footer'>
+        <footer className='card-footer mt-3'>
           <a
-            href='#'
             onClick={likeOrDisLikeAPost}
             className={`card-footer-item ${
               isLikedPost && 'has-text-danger has-text-weight-bold'
@@ -168,8 +167,7 @@ export default function PostCard(props) {
             All Comments
           </button>
         </footer>
-
-        <div className={`box ${comments.length === 0 && 'is-hidden'}`}>
+        <div className={`box ${comments.length === 0 && 'is-hidden'} mt-2`}>
           {comments.map((comment) => (
             <div>
               <span className='is-size-5 has-text-weight-bold'>
@@ -181,6 +179,7 @@ export default function PostCard(props) {
             </div>
           ))}
         </div>
+
       </div>
     </div>
   )

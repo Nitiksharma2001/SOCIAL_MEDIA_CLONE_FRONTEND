@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { getWithoutAuth } from '../utils/Request'
 import { Alert, Collapse } from '@mui/material'
-import {authorization} from "../constants/Constants"
+import { authorization } from '../constants/Constants'
 import { useDispatch } from 'react-redux'
 import { setUser } from '../features/UserSlice'
 
@@ -29,13 +29,14 @@ export default function SignInPage() {
     try {
       setLoading(true)
       const data = new FormData(event.currentTarget)
-      const email = data.get('email'), password = data.get('password')
+      const email = data.get('email'),
+        password = data.get('password')
       const result = await getWithoutAuth(`auth/signin/${email}/${password}`)
       setMessage(result.message)
       if (result.user) {
         localStorage.setItem('user', JSON.stringify(result.user))
       }
-      if(result.message === authorization.USER_VERIFIED){
+      if (result.message === authorization.USER_VERIFIED) {
         dispatch(setUser(result.user))
         navigate('/')
       }
@@ -47,31 +48,16 @@ export default function SignInPage() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <Collapse in={message !== ''}>
-        <Alert severity={message === authorization.USER_VERIFIED ? 'success' : 'error'}>
+        <Alert
+          severity={
+            message === authorization.USER_VERIFIED ? 'success' : 'error'
+          }
+        >
           {message}
         </Alert>
       </Collapse>
 
-      <Grid container component='main' sx={{ height: '100vh' }}>
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={7}
-          sx={{
-            backgroundImage:
-              'url(https://source.unsplash.com/random?wallpapers)',
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light'
-                ? t.palette.grey[50]
-                : t.palette.grey[900],
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+      <Grid container component='main' sx={{ height: '100vh', display: 'flex', justifyContent: 'center' }}>
           <Box
             sx={{
               my: 8,
@@ -133,7 +119,6 @@ export default function SignInPage() {
             </Box>
           </Box>
         </Grid>
-      </Grid>
     </ThemeProvider>
   )
 }

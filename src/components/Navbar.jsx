@@ -94,6 +94,7 @@ function ResponsiveAppBar() {
             </>
           )}
         </div>
+        
       </nav>
       <AddPostModal isActive={isActive} setIsActive={setIsActive} />
     </>
