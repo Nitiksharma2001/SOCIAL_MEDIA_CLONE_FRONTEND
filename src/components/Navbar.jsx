@@ -31,15 +31,12 @@ function ResponsiveAppBar() {
   return (
     <>
       <nav
-        className='navbar'
+        className='navbar is-size-5 mx-2'
         role='navigation'
         aria-label='main navigation'
       >
-        <div
-          className='navbar-brand'
-          style={{ marginLeft: '1rem' }}
-        >
-          <Link to='/' className='navbar-item'>
+        <div className='navbar-brand'>
+          <Link to='/' className='navbar-item '>
             Social Media
           </Link>
           <a
@@ -94,7 +91,6 @@ function ResponsiveAppBar() {
             </>
           )}
         </div>
-        
       </nav>
       <AddPostModal isActive={isActive} setIsActive={setIsActive} />
     </>
