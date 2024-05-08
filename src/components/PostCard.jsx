@@ -17,7 +17,7 @@ import 'react-lazy-load-image-component/src/effects/opacity.css'
 import { CircularProgress } from '@mui/material'
 
 export default function PostCard(props) {
-  const { _id, title, description, imageUrl, noOfLikes, createdAt } = props.post
+  const { _id, title, description, imageUrl, noOfLikes, createdAt, imageAddress } = props.post
   const [isLoading, setIsLoading] = useState(false)
   const [comment, setComment] = useState('')
   const [comments, setComments] = useState([])
@@ -98,7 +98,7 @@ export default function PostCard(props) {
         )}
         <figure className='image is-4by3'>
           <LazyLoadImage
-            src={imageUrl} // use normal <img> attributes as props
+            src={imageAddress} // use normal <img> attributes as props
             onLoad={() => setImageLoading(false)}
             height='100%'
             width='100%'
@@ -111,7 +111,7 @@ export default function PostCard(props) {
           <div className='media-left'>
             <figure className='image is-48x48'>
               <LazyLoadImage 
-                src={imageUrl} // use normal <img> attributes as props
+                src={props.post.user.imageAddress} // use normal <img> attributes as props
                 onLoad={() => setImageLoading(false)}
                 height='100%'
                 width='100%'

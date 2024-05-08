@@ -1,10 +1,8 @@
 import * as React from 'react'
 import Avatar from '@mui/material/Avatar'
-import CssBaseline from '@mui/material/CssBaseline'
 import TextField from '@mui/material/TextField'
 import LoadingButton from '@mui/lab/LoadingButton'
 import { Link, useNavigate } from 'react-router-dom'
-import Paper from '@mui/material/Paper'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
@@ -29,9 +27,9 @@ export default function SignInPage() {
     try {
       setLoading(true)
       const data = new FormData(event.currentTarget)
-      const email = data.get('email'),
-        password = data.get('password')
+      const email = data.get('email'), password = data.get('password')
       const result = await getWithoutAuth(`auth/signin/${email}/${password}`)
+      console.log(result)
       setMessage(result.message)
       if (result.user) {
         localStorage.setItem('user', JSON.stringify(result.user))

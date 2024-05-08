@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { postwithAuth } from '../utils/Request'
 import { useDispatch, useSelector } from 'react-redux'
 import { addPost } from '../features/PostSlice'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { storage } from '../firebaseConfig'
 const style = {
   position: 'absolute',
   top: '50%',
@@ -22,9 +24,8 @@ export default function BasicModal({ isActive, setIsActive }) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    imageUrl: '',
   })
-
+  const [fileUpload, setFileUpload] = useState(null)
   const formDataChange = (e) => {
     setFormData((prev) => {
       return {
@@ -37,9 +38,15 @@ export default function BasicModal({ isActive, setIsActive }) {
   const handleSubmit = async () => {
     setIsLoading(true)
     try {
-      const result = await postwithAuth('post/', user.token, formData)
+      const storageRef = ref(storage, `postImages/${fileUpload.name}`)
+      await uploadBytes(storageRef, fileUpload)
+      const imageAddress = await getDownloadURL(storageRef)
+      const result = await postwithAuth('post/', user.token, {
+        ...formData,
+        imageAddress,
+      })
       dispatch(addPost(result.post))
-      setFormData({ title: '', description: '', imageUrl: '' })
+      setFormData({ title: '', description: '' })
       if ((result.message = 'post created')) {
         setIsActive(false)
       }
@@ -87,17 +94,24 @@ export default function BasicModal({ isActive, setIsActive }) {
             </div>
           </div>
 
-          <div className='field'>
-            <label className='label'>Image URL</label>
-            <div className='control'>
+          <div class='file has-name mt-5'>
+            <label class='file-label'>
               <input
-                className='input'
-                name='imageUrl'
-                value={formData.imageUrl}
-                onChange={formDataChange}
-                type='text'
+                class='file-input'
+                onChange={(e) => setFileUpload(e.target?.files[0])}
+                type='file'
+                name='resume'
               />
-            </div>
+              <span class='file-cta'>
+                <span class='file-icon'>
+                  <i class='fas fa-upload'></i>
+                </span>
+                <span class='file-label'> Choose a file… </span>
+              </span>
+              {fileUpload && <span class='file-name'>
+                {fileUpload.name}
+              </span>}
+            </label>
           </div>
         </section>
         <footer className='modal-card-foot'>

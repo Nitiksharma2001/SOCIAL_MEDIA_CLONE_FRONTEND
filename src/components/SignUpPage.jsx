@@ -9,9 +9,13 @@ import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { useState } from 'react'
-import { Grid } from '@mui/material'
+import { Button, Grid } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
 import { postWithoutAuth } from '../utils/Request'
+import { styled } from '@mui/material/styles'
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { storage } from '../firebaseConfig'
 
 const defaultTheme = createTheme()
 
@@ -27,14 +31,31 @@ export default function SignUpPage() {
       email: data.get('email'),
       password: data.get('password'),
     }
-    try{
-      await postWithoutAuth('auth/signup', newUserData)
+    try {
+      const storageRef = ref(
+        storage,
+        `profilePictures/${data.get('file').name}`
+      )
+      await uploadBytes(storageRef, data.get('file'))
+      const imageAddress = await getDownloadURL(storageRef)
+      await postWithoutAuth('auth/signup', { ...newUserData, imageAddress })
       navigate('/signin')
-    } finally{
+    } finally {
       setIsButtonLoading(false)
     }
   }
 
+  const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  })
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component='main' maxWidth='xs'>
@@ -92,6 +113,21 @@ export default function SignUpPage() {
                   autoComplete='new-password'
                 />
               </Grid>
+              <Grid item xs={12}>
+                <Button
+                  component='label'
+                  variant='secondary'
+                  tabIndex={-1}
+                  startIcon={<CloudUploadIcon />}
+                  sx={{
+                    display: 'flex',
+                  }}
+                >
+                  Upload Profile Picture
+                  <VisuallyHiddenInput type='file' name='file' />
+                </Button>
+              </Grid>
+              <Grid item xs={12}></Grid>
             </Grid>
             <LoadingButton
               fullWidth

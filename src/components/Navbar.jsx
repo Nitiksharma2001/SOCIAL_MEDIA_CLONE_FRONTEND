@@ -41,7 +41,7 @@ function ResponsiveAppBar() {
           </Link>
           <a
             role='button'
-            class={`navbar-burger ${isHamburgerActive && 'is-active'}`}
+            className={`navbar-burger ${isHamburgerActive && 'is-active'}`}
             data-target='navMenu'
             aria-label='menu'
             aria-expanded='false'
