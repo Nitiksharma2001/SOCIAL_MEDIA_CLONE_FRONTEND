@@ -11,13 +11,23 @@ import {
 import moment from 'moment'
 import { useState } from 'react'
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import 'react-lazy-load-image-component/src/effects/opacity.css'
 import { CircularProgress } from '@mui/material'
 
 export default function PostCard(props) {
-  const { _id, title, description, imageUrl, noOfLikes, createdAt, imageAddress } = props.post
+  const {
+    _id,
+    title,
+    description,
+    imageUrl,
+    noOfLikes,
+    createdAt,
+    imageAddress,
+   
+  } = props.post
+  const titleClickable = props.titleClickable === false ? false : true
   const [isLoading, setIsLoading] = useState(false)
   const [comment, setComment] = useState('')
   const [comments, setComments] = useState([])
@@ -83,8 +93,16 @@ export default function PostCard(props) {
 
   return (
     <div className='card' style={{ maxWidth: '25rem' }}>
-      <div className='title is-2 m-2'>{title}</div>
-      <div className='card-image is-relative'>
+      <Link
+        to={`/post/${_id}`}
+        className={`title is-2 ${
+          titleClickable && 'is-underlined'
+        } has-text-primary`}
+        style={{ cursor: titleClickable ? 'pointer' : 'auto' }}
+      >
+        {title}
+      </Link>
+      <div className='card-image is-relative mt-2'>
         {imageLoading && (
           <CircularProgress
             color='secondary'
@@ -110,7 +128,7 @@ export default function PostCard(props) {
         <div className='media'>
           <div className='media-left'>
             <figure className='image is-48x48'>
-              <LazyLoadImage 
+              <LazyLoadImage
                 src={props.post.user.imageAddress} // use normal <img> attributes as props
                 onLoad={() => setImageLoading(false)}
                 height='100%'
@@ -120,7 +138,7 @@ export default function PostCard(props) {
             </figure>
           </div>
           <div className='media-content'>
-            <p className='title is-4'>{props.post.user.name}</p>
+            <Link to={`/profile/${props.post.user._id}`} className='title is-4 is-underlined'>{props.post.user.name}</Link>
             <p className='subtitle is-6'>
               {moment(createdAt).format('Do MMMM YYYY HH:MM A')}
             </p>
@@ -179,7 +197,6 @@ export default function PostCard(props) {
             </div>
           ))}
         </div>
-
       </div>
     </div>
   )

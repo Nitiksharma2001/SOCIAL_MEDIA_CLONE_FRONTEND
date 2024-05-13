@@ -10,6 +10,8 @@ import { getwithAuth, getWithoutAuth } from "./utils/Request";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "./features/UserSlice";
 import {setPost} from "./features/PostSlice"
+import SinglePostPage from "./components/SinglePostPage";
+import MessagesPage from "./components/MessagesPage";
 function App() {
   const user = useSelector((state) => state.user.value)
   const [notification, setNotification] = useState('')
@@ -37,9 +39,16 @@ function App() {
               <DashBoard/>
             </div>}>
         </Route>
+        <Route path="/profile/:userId" element={
+          <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <ProfilePage/> 
+          </div>}>
+        </Route>
+        
+        <Route path="/post/:postId" element={ <SinglePostPage/> }/>
+        <Route path="/messages" element={ <MessagesPage/> }/>
         <Route path="/signin" element={ <SignInPage/> }/>
         <Route path="/signup" element={ <SignUpPage/> }/>
-        <Route path="/profile" element={ <ProfilePage/> }/>
       </Routes>
     </BrowserRouter>
   );
