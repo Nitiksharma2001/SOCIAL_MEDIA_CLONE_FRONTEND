@@ -80,8 +80,21 @@ function ResponsiveAppBar() {
                     Add Post
                   </a>
                 </div>
+                {/* <div className='navbar-item'>
+                  <Link
+                    to={'/messages'}
+                    className='navbar-item'
+                  >
+                    Messages
+                  </Link>
+                </div> */}
               </div>
               <div className='navbar-end'>
+                <div className='navbar-item'>
+                  <Link to={`/profile/${user._id}`} className='navbar-item'>
+                    Profile
+                  </Link>
+                </div>
                 <div className='navbar-item'>
                   <a onClick={onLogOut} className='navbar-item'>
                     Log Out

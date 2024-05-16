@@ -12,7 +12,6 @@ import { LazyLoadImage } from 'react-lazy-load-image-component'
 
 export default function EditButton() {
   const user = useSelector((state) => state.user.value)
-  const dispatch = useDispatch()
   const { userId } = useParams()
 
   const [userDetails, setUserDetails] = useState(null)
@@ -20,55 +19,57 @@ export default function EditButton() {
   const [isLoading, setIsLoading] = useState(false)
   useEffect(() => {
     const getUserDetailsAndSetFollowButton = async () => {
-      const updatedUser = await getwithAuth(`user/${userId}`)
-      const result = await getwithAuth(`user/follow/${userId}`, user.token)
-      setFollowedOrNot(result.findOrNot)
-      setUserDetails(updatedUser)
+      if(user){
+        const updatedUser = await getwithAuth(`user/${userId}`)
+        const result = await getwithAuth(`user/follow/${userId}`, user.token)
+        setFollowedOrNot(result.findOrNot)
+        setUserDetails(updatedUser)
+      }
     }
     getUserDetailsAndSetFollowButton()
-  }, [userId])
+  }, [user, userId])
 
   const followUnfollowTheUser = async () => {
     setIsLoading(true)
-    try{
+    try {
       await putWithAuth(
         `user/${followedOrNot ? 'unfollow' : 'follow'}/${userId}`,
         user.token
       )
-      setUserDetails(prev => {
+      setUserDetails((prev) => {
         return {
-          ...prev, 
+          ...prev,
           user: {
             ...prev.user,
-            followers: prev.user.followers + (followedOrNot ? -1 : 1)
-          }
+            followers: prev.user.followers + (followedOrNot ? -1 : 1),
+          },
         }
       })
       setFollowedOrNot(!followedOrNot)
-    } finally{
+    } finally {
       setIsLoading(false)
     }
   }
   return (
-    <div
-      className='card'  
-      style={{width: '40rem'}}    
-    >
+    <div className='card' style={{ width: '40rem' }}>
       <div className='card-content is-flex '>
         <div className='card-image'>
           <figure className='image is-96x96'>
             <LazyLoadImage
-                src={userDetails && userDetails.user.imageAddress} // use normal <img> attributes as props
-                height='100%'
-                width='100%'
-                effect='opacity'
-              />
+              src={userDetails && userDetails.user.imageAddress} // use normal <img> attributes as props
+              height='60%'
+              width='100%'
+              effect='opacity'
+            />
           </figure>
         </div>
         <div className='is-flex is-flex-direction-column ml-4'>
           <div className='title'>{userDetails && userDetails.user.name}</div>
           {user && user._id !== userId && (
-            <button onClick={followUnfollowTheUser} className={`button is-primary ${isLoading && 'is-loading'}`}>
+            <button
+              onClick={followUnfollowTheUser}
+              className={`button is-primary ${isLoading && 'is-loading'}`}
+            >
               {followedOrNot ? 'UnFollow' : 'Follow'}
             </button>
           )}
@@ -86,19 +87,20 @@ export default function EditButton() {
       <div className='cart-content is-flex is-flex-wrap-wrap is-justify-content-space-evenly my-4'>
         {userDetails &&
           userDetails.posts.map((post) => {
-            return <div onMouseOver={console.log(4)} className='is-flex is-flex-direction-column is-align-items-center'>
-              <Link to={`/post/${post._id}`}> 
-                <LazyLoadImage
-                  src={post.imageAddress} // use normal <img> attributes as props
-                  height='100%'
-                  width='100%'
-                  effect='opacity'
-                />
-              </Link>
-              <div className='title'>{post.title}</div>
-            </div>  
+            return (
+              <div className='is-flex is-flex-direction-column is-align-items-center'>
+                <Link to={`/post/${post._id}`}>
+                  <LazyLoadImage
+                    src={post.imageAddress} // use normal <img> attributes as props
+                    height='100%'
+                    width='100%'
+                    effect='opacity'
+                  />
+                </Link>
+                <div className='title'>{post.title}</div>
+              </div>
+            )
           })}
-          
       </div>
     </div>
   )
